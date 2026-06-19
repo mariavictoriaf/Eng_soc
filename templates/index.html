@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+{% block title %}Banco Solar — Transparência{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>☀️ Banco Solar</h1>
+  <p>Energia limpa, economia real. Confira a transparência dos nossos dados em tempo real.</p>
+</section>
+
+<div class="container">
+  <!-- Indicadores principais -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon icon-solar">📊</span> Indicadores de Transparência
+    </h2>
+    <div class="stats-grid">
+      <div class="stat-card solar fade-up">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-label">Economia Total (kW)</div>
+        <div class="stat-value count-up" data-target="{{ transparencia.economia_kw }}">0</div>
+      </div>
+      <div class="stat-card green fade-up">
+        <div class="stat-icon">💳</div>
+        <div class="stat-label">Créditos dos Usuários</div>
+        <div class="stat-value count-up" data-target="{{ transparencia.creditos }}">0</div>
+      </div>
+      <div class="stat-card blue fade-up">
+        <div class="stat-icon">🔋</div>
+        <div class="stat-label">kW Recebidos</div>
+        <div class="stat-value count-up" data-target="{{ transparencia.kw_recebidos }}">0</div>
+      </div>
+      <div class="stat-card purple fade-up">
+        <div class="stat-icon">💰</div>
+        <div class="stat-label">Total Investido (R$)</div>
+        <div class="stat-value count-up" data-target="{{ transparencia.investido }}" data-prefix="R$ ">0</div>
+      </div>
+      <div class="stat-card solar fade-up">
+        <div class="stat-icon">🌸</div>
+        <div class="stat-label">Cashback Orquídeas (R$)</div>
+        <div class="stat-value count-up" data-target="{{ transparencia.cashback_orquideas }}" data-prefix="R$ ">0</div>
+      </div>
+      <div class="stat-card green fade-up">
+        <div class="stat-icon">🏭</div>
+        <div class="stat-label">Geração Total (kWh)</div>
+        <div class="stat-value count-up" data-target="{{ transparencia.geracao_total_kwh }}">0</div>
+      </div>
+      <div class="stat-card blue fade-up">
+        <div class="stat-icon">🌿</div>
+        <div class="stat-label">CO₂ Evitado (kg)</div>
+        <div class="stat-value count-up" data-target="{{ transparencia.co2_evitado_total }}">0</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gráficos -->
+  <section class="section">
+    <h2 class="section-title">
+      <span class="icon icon-green">📈</span> Visão Geral da Geração
+    </h2>
+    <div class="charts-grid">
+      <div class="chart-card fade-up">
+        <h3>📈 Geração Mensal (kWh)</h3>
+        <canvas id="chartGeracaoMensal"></canvas>
+      </div>
+      <div class="chart-card fade-up">
+        <h3>🥧 Geração por Usina</h3>
+        <canvas id="chartGeracaoUsina"></canvas>
+      </div>
+      <div class="chart-card fade-up">
+        <h3>🌿 CO₂ Evitado por Mês (kg)</h3>
+        <canvas id="chartCO2"></canvas>
+      </div>
+      <div class="chart-card fade-up">
+        <h3>👥 Comunidade Solar</h3>
+        <canvas id="chartComunidade"></canvas>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // ─── Counter Animation ───
+  function animateCounters() {
+    document.querySelectorAll('.count-up').forEach(el => {
+      const target = parseFloat(el.dataset.target);
+      const prefix = el.dataset.prefix || '';
+      const duration = 2000;
+      const start = performance.now();
+
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        el.textContent = prefix + current.toLocaleString('pt-BR', {
+          minimumFractionDigits: target % 1 !== 0 ? 1 : 0,
+          maximumFractionDigits: target % 1 !== 0 ? 1 : 0
+        });
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    });
+  }
+
+  // ─── Chart.js Global Defaults ───
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+  Chart.defaults.font.family = "'Inter', sans-serif";
+
+  const geracaoMes = {{ geracao_por_mes | tojson }};
+  const geracaoUsina = {{ geracao_por_usina | tojson }};
+
+  // Geração Mensal - Line Chart
+  new Chart(document.getElementById('chartGeracaoMensal'), {
+    type: 'line',
+    data: {
+      labels: geracaoMes.map(d => d.mes),
+      datasets: [{
+        label: 'Geração (kWh)',
+        data: geracaoMes.map(d => d.geracao_kwh),
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.1)',
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#f59e0b',
+        pointBorderColor: '#f59e0b',
+        pointRadius: 4,
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: false, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  // Geração por Usina - Doughnut
+  new Chart(document.getElementById('chartGeracaoUsina'), {
+    type: 'doughnut',
+    data: {
+      labels: geracaoUsina.map(d => d.nome),
+      datasets: [{
+        data: geracaoUsina.map(d => d.geracao_kwh),
+        backgroundColor: ['#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'],
+        borderWidth: 0,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } }
+      }
+    }
+  });
+
+  // CO2 - Bar Chart
+  new Chart(document.getElementById('chartCO2'), {
+    type: 'bar',
+    data: {
+      labels: geracaoMes.map(d => d.mes),
+      datasets: [{
+        label: 'CO₂ Evitado (kg)',
+        data: geracaoMes.map(d => d.co2_evitado_kg),
+        backgroundColor: 'rgba(16,185,129,0.6)',
+        borderColor: '#10b981',
+        borderWidth: 1,
+        borderRadius: 6,
+        hoverBackgroundColor: 'rgba(16,185,129,0.8)'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  // Comunidade - Radar
+  new Chart(document.getElementById('chartComunidade'), {
+    type: 'radar',
+    data: {
+      labels: ['Economia kW', 'Créditos', 'kW Recebidos', 'Investimento', 'Cashback'],
+      datasets: [{
+        label: 'Performance',
+        data: [
+          {{ transparencia.economia_kw }},
+          {{ transparencia.creditos }},
+          {{ transparencia.kw_recebidos }},
+          {{ transparencia.investido / 100 }},
+          {{ transparencia.cashback_orquideas / 10 }}
+        ],
+        backgroundColor: 'rgba(245,158,11,0.15)',
+        borderColor: '#f59e0b',
+        borderWidth: 2,
+        pointBackgroundColor: '#f59e0b'
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.05)' } } }
+    }
+  });
+
+  // Start counter animation
+  setTimeout(animateCounters, 500);
+</script>
+{% endblock %}

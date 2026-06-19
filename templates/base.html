@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Banco Solar - Transparência e gestão de energia solar comunitária">
+  <title>{% block title %}Banco Solar{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+</head>
+<body>
+  <div class="bg-grid"></div>
+
+  <nav class="navbar">
+    <a href="{{ url_for('index') }}" class="navbar-brand">
+      <div class="sun-icon">☀️</div>
+      Banco Solar
+    </a>
+    <div class="navbar-actions">
+      {% if session.get('user_id') %}
+        <span style="color:var(--text-secondary);font-size:0.85rem;">Olá, {{ session.get('user_nome') }}</span>
+        {% if session.get('user_tipo') == 'admin' %}
+          <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline btn-sm">⚙️ Painel</a>
+        {% else %}
+          <a href="{{ url_for('cliente_dashboard') }}" class="btn btn-outline btn-sm">📊 Meu Painel</a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">Sair</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary">🔑 Entrar</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <footer class="footer">
+    <p>© 2026 Banco Solar — Energia limpa, economia real. 🌱</p>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

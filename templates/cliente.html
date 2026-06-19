@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}Banco Solar — Meu Painel{% endblock %}
+
+{% block content %}
+<div class="container dashboard">
+  <div class="dashboard-header">
+    <div>
+      <h1>👋 Olá, {{ user.nome.split()[0] }}!</h1>
+      <p class="welcome">Confira seus dados de energia solar. Cliente desde {{ user.data_cadastro }}.</p>
+    </div>
+  </div>
+
+  <!-- KPIs do Cliente -->
+  <div class="stats-grid">
+    <div class="stat-card solar fade-up">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-label">Minha Economia (kW)</div>
+      <div class="stat-value count-up" data-target="{{ user.economia_kw }}">0</div>
+    </div>
+    <div class="stat-card green fade-up">
+      <div class="stat-icon">💳</div>
+      <div class="stat-label">Créditos Restantes</div>
+      <div class="stat-value count-up" data-target="{{ user.creditos }}">0</div>
+    </div>
+    <div class="stat-card blue fade-up">
+      <div class="stat-icon">🔋</div>
+      <div class="stat-label">kW Recebidos</div>
+      <div class="stat-value count-up" data-target="{{ user.kw_recebidos }}">0</div>
+    </div>
+    <div class="stat-card purple fade-up">
+      <div class="stat-icon">💰</div>
+      <div class="stat-label">Total Investido (R$)</div>
+      <div class="stat-value count-up" data-target="{{ user.investido }}" data-prefix="R$ ">0</div>
+    </div>
+    <div class="stat-card solar fade-up">
+      <div class="stat-icon">🌸</div>
+      <div class="stat-label">Cashback Orquídeas (R$)</div>
+      <div class="stat-value count-up" data-target="{{ user.cashback_orquideas }}" data-prefix="R$ ">0</div>
+    </div>
+    {% if residencia %}
+    <div class="stat-card green fade-up">
+      <div class="stat-icon">🏠</div>
+      <div class="stat-label">Economia Mensal (R$)</div>
+      <div class="stat-value count-up" data-target="{{ residencia.economia_mensal_rs }}" data-prefix="R$ ">0</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Status da Residência -->
+  {% if residencia %}
+  <div class="status-card fade-up">
+    <h3>🏠 Status da Minha Residência</h3>
+    <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">{{ residencia.endereco }}</p>
+    <div class="status-row">
+      <span style="color:var(--text-secondary);">Em dia com o Banco Solar</span>
+      <span class="badge {{ 'badge-success' if residencia.em_dia_banco == 'sim' else 'badge-danger' }}">
+        {{ '✅ Sim' if residencia.em_dia_banco == 'sim' else '❌ Não' }}
+      </span>
+    </div>
+    <div class="status-row">
+      <span style="color:var(--text-secondary);">Em dia com a Concessionária</span>
+      <span class="badge {{ 'badge-success' if residencia.em_dia_concessionaria == 'sim' else 'badge-danger' }}">
+        {{ '✅ Sim' if residencia.em_dia_concessionaria == 'sim' else '❌ Não' }}
+      </span>
+    </div>
+    <div class="status-row">
+      <span style="color:var(--text-secondary);">Cashback Orquídeas em dia</span>
+      <span class="badge {{ 'badge-success' if residencia.cashback_em_dia == 'sim' else 'badge-danger' }}">
+        {{ '✅ Sim' if residencia.cashback_em_dia == 'sim' else '❌ Não' }}
+      </span>
+    </div>
+    <div class="status-row">
+      <span style="color:var(--text-secondary);">Consumo Mensal</span>
+      <span style="font-weight:600;color:var(--accent-blue);">{{ residencia.consumo_mensal_kwh }} kWh</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Gráficos do Cliente -->
+  <div class="charts-grid">
+    <div class="chart-card fade-up">
+      <h3>📈 Minha Economia ao Longo do Tempo (kW)</h3>
+      <canvas id="chartEconomia"></canvas>
+    </div>
+    <div class="chart-card fade-up">
+      <h3>🔋 kW Recebidos por Mês</h3>
+      <canvas id="chartKW"></canvas>
+    </div>
+    <div class="chart-card fade-up">
+      <h3>💳 Evolução dos Créditos</h3>
+      <canvas id="chartCreditos"></canvas>
+    </div>
+    <div class="chart-card fade-up">
+      <h3>📊 Distribuição dos Meus Dados</h3>
+      <canvas id="chartDistribuicao"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Counter animation
+  function animateCounters() {
+    document.querySelectorAll('.count-up').forEach(el => {
+      const target = parseFloat(el.dataset.target);
+      const prefix = el.dataset.prefix || '';
+      const duration = 2000;
+      const start = performance.now();
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        el.textContent = prefix + current.toLocaleString('pt-BR', {
+          minimumFractionDigits: target % 1 !== 0 ? 1 : 0,
+          maximumFractionDigits: target % 1 !== 0 ? 1 : 0
+        });
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    });
+  }
+
+  Chart.defaults.color = '#94a3b8';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+  Chart.defaults.font.family = "'Inter', sans-serif";
+
+  const historico = {{ historico | tojson }};
+
+  // Economia line chart
+  new Chart(document.getElementById('chartEconomia'), {
+    type: 'line',
+    data: {
+      labels: historico.meses,
+      datasets: [{
+        label: 'Economia (kW)',
+        data: historico.economia,
+        borderColor: '#f59e0b',
+        backgroundColor: 'rgba(245,158,11,0.1)',
+        fill: true, tension: 0.4,
+        pointBackgroundColor: '#f59e0b', pointRadius: 5, pointHoverRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  // kW Recebidos bar chart
+  new Chart(document.getElementById('chartKW'), {
+    type: 'bar',
+    data: {
+      labels: historico.meses,
+      datasets: [{
+        label: 'kW Recebidos',
+        data: historico.kw_recebidos,
+        backgroundColor: 'rgba(59,130,246,0.6)',
+        borderColor: '#3b82f6', borderWidth: 1, borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  // Créditos area chart
+  new Chart(document.getElementById('chartCreditos'), {
+    type: 'line',
+    data: {
+      labels: historico.meses,
+      datasets: [{
+        label: 'Créditos',
+        data: historico.creditos,
+        borderColor: '#10b981',
+        backgroundColor: 'rgba(16,185,129,0.1)',
+        fill: true, tension: 0.4,
+        pointBackgroundColor: '#10b981', pointRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+    }
+  });
+
+  // Distribuição polar
+  new Chart(document.getElementById('chartDistribuicao'), {
+    type: 'polarArea',
+    data: {
+      labels: ['Economia kW', 'Créditos', 'kW Recebidos', 'Investido (R$)', 'Cashback (R$)'],
+      datasets: [{
+        data: [{{ user.economia_kw }}, {{ user.creditos }}, {{ user.kw_recebidos }}, {{ user.investido / 100 }}, {{ user.cashback_orquideas / 10 }}],
+        backgroundColor: [
+          'rgba(245,158,11,0.6)', 'rgba(16,185,129,0.6)',
+          'rgba(59,130,246,0.6)', 'rgba(139,92,246,0.6)', 'rgba(236,72,153,0.6)'
+        ],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom', labels: { padding: 12, usePointStyle: true } } }
+    }
+  });
+
+  setTimeout(animateCounters, 300);
+</script>
+{% endblock %}
