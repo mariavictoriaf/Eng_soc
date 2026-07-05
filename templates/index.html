@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Banco Solar — Transparência{% endblock %}
+{% block title %}Banco Jardim Botânico — Transparência{% endblock %}
 
 {% block content %}
 <section class="hero">
-  <h1>☀️ Banco Solar</h1>
+  <h1>☀️ Banco Jardim Botânico</h1>
   <p>Energia limpa, economia real. Confira a transparência dos nossos dados em tempo real.</p>
 </section>
 
@@ -14,41 +14,48 @@
       <span class="icon icon-solar">📊</span> Indicadores de Transparência
     </h2>
     <div class="stats-grid">
-      <div class="stat-card solar fade-up">
+      <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.economia_kw)">
         <div class="stat-icon">⚡</div>
         <div class="stat-label">Economia Total (kW)</div>
         <div class="stat-value count-up" data-target="{{ transparencia.economia_kw }}">0</div>
-      </div>
-      <div class="stat-card green fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.creditos)">
         <div class="stat-icon">💳</div>
         <div class="stat-label">Créditos dos Usuários</div>
         <div class="stat-value count-up" data-target="{{ transparencia.creditos }}">0</div>
-      </div>
-      <div class="stat-card blue fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card blue fade-up" onclick="openStatModal(statInfo.kw_recebidos)">
         <div class="stat-icon">🔋</div>
         <div class="stat-label">kW Recebidos</div>
         <div class="stat-value count-up" data-target="{{ transparencia.kw_recebidos }}">0</div>
-      </div>
-      <div class="stat-card purple fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card purple fade-up" onclick="openStatModal(statInfo.investido)">
         <div class="stat-icon">💰</div>
         <div class="stat-label">Total Investido (R$)</div>
         <div class="stat-value count-up" data-target="{{ transparencia.investido }}" data-prefix="R$ ">0</div>
-      </div>
-      <div class="stat-card solar fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.cashback_orquideas)">
         <div class="stat-icon">🌸</div>
         <div class="stat-label">Cashback Orquídeas (R$)</div>
         <div class="stat-value count-up" data-target="{{ transparencia.cashback_orquideas }}" data-prefix="R$ ">0</div>
-      </div>
-      <div class="stat-card green fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.geracao_total_kwh)">
         <div class="stat-icon">🏭</div>
         <div class="stat-label">Geração Total (kWh)</div>
         <div class="stat-value count-up" data-target="{{ transparencia.geracao_total_kwh }}">0</div>
-      </div>
-      <div class="stat-card blue fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card blue fade-up" onclick="openStatModal(statInfo.co2_evitado_total)">
         <div class="stat-icon">🌿</div>
         <div class="stat-label">CO₂ Evitado (kg)</div>
         <div class="stat-value count-up" data-target="{{ transparencia.co2_evitado_total }}">0</div>
-      </div>
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
     </div>
   </section>
 
@@ -105,12 +112,51 @@
   }
 
   // ─── Chart.js Global Defaults ───
-  Chart.defaults.color = '#94a3b8';
-  Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+  Chart.defaults.color = '#475569';
+  Chart.defaults.borderColor = 'rgba(15,23,42,0.08)';
   Chart.defaults.font.family = "'Inter', sans-serif";
 
   const geracaoMes = {{ geracao_por_mes | tojson }};
   const geracaoUsina = {{ geracao_por_usina | tojson }};
+
+  // ─── Dados para o modal de cada indicador ───
+  const statInfo = {
+    economia_kw: {
+      title: 'Economia Total (kW)', icon: '⚡', color: '#d97706',
+      desc: 'Soma da energia (em kW) que todos os clientes do banco solar deixaram de consumir da concessionária, graças aos créditos gerados pelas usinas parceiras.',
+      total: {{ transparencia.economia_kw }}
+    },
+    creditos: {
+      title: 'Créditos dos Usuários', icon: '💳', color: '#059669',
+      desc: 'Total de créditos de energia acumulados por todos os clientes, ainda disponíveis para abatimento em contas futuras de energia.',
+      total: {{ transparencia.creditos }}
+    },
+    kw_recebidos: {
+      title: 'kW Recebidos', icon: '🔋', color: '#2563eb',
+      desc: 'Quantidade total de energia (kW) que os clientes já receberam das usinas solares parceiras e utilizaram para compensar seu consumo.',
+      total: {{ transparencia.kw_recebidos }}
+    },
+    investido: {
+      title: 'Total Investido (R$)', icon: '💰', color: '#7c3aed',
+      desc: 'Valor total, em reais, investido pelos clientes para participar do banco solar e ter direito aos créditos de energia limpa.',
+      total: {{ transparencia.investido }}
+    },
+    cashback_orquideas: {
+      title: 'Cashback Orquídeas (R$)', icon: '🌸', color: '#d97706',
+      desc: 'Valor em reais devolvido aos clientes através do programa de cashback "Orquídeas", um benefício adicional por manterem sua participação em dia.',
+      total: {{ transparencia.cashback_orquideas }}
+    },
+    geracao_total_kwh: {
+      title: 'Geração Total (kWh)', icon: '🏭', color: '#059669',
+      desc: 'Energia total gerada por todas as usinas solares parceiras do banco, medida em quilowatt-hora (kWh), somada mês a mês.',
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(d => d.geracao_kwh) }
+    },
+    co2_evitado_total: {
+      title: 'CO₂ Evitado (kg)', icon: '🌿', color: '#2563eb',
+      desc: 'Estimativa de emissões de CO₂ que deixaram de ser lançadas na atmosfera graças à energia solar gerada, em comparação com fontes convencionais.',
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(d => d.co2_evitado_kg) }
+    }
+  };
 
   // Geração Mensal - Line Chart
   new Chart(document.getElementById('chartGeracaoMensal'), {
@@ -133,7 +179,7 @@
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: false, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { beginAtZero: false, grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -176,7 +222,7 @@
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -203,7 +249,7 @@
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { r: { grid: { color: 'rgba(255,255,255,0.05)' }, angleLines: { color: 'rgba(255,255,255,0.05)' } } }
+      scales: { r: { grid: { color: 'rgba(15,23,42,0.06)' }, angleLines: { color: 'rgba(15,23,42,0.06)' } } }
     }
   });
 

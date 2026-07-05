@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Banco Solar — Meu Painel{% endblock %}
+{% block title %}Banco Jardim Botânico — Meu Painel{% endblock %}
 
 {% block content %}
 <div class="container dashboard">
@@ -12,37 +12,43 @@
 
   <!-- KPIs do Cliente -->
   <div class="stats-grid">
-    <div class="stat-card solar fade-up">
+    <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.economia_kw)">
       <div class="stat-icon">⚡</div>
       <div class="stat-label">Minha Economia (kW)</div>
       <div class="stat-value count-up" data-target="{{ user.economia_kw }}">0</div>
-    </div>
-    <div class="stat-card green fade-up">
+      <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+    </button>
+    <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.creditos)">
       <div class="stat-icon">💳</div>
       <div class="stat-label">Créditos Restantes</div>
       <div class="stat-value count-up" data-target="{{ user.creditos }}">0</div>
-    </div>
-    <div class="stat-card blue fade-up">
+      <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+    </button>
+    <button type="button" class="stat-card blue fade-up" onclick="openStatModal(statInfo.kw_recebidos)">
       <div class="stat-icon">🔋</div>
       <div class="stat-label">kW Recebidos</div>
       <div class="stat-value count-up" data-target="{{ user.kw_recebidos }}">0</div>
-    </div>
-    <div class="stat-card purple fade-up">
+      <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+    </button>
+    <button type="button" class="stat-card purple fade-up" onclick="openStatModal(statInfo.investido)">
       <div class="stat-icon">💰</div>
       <div class="stat-label">Total Investido (R$)</div>
       <div class="stat-value count-up" data-target="{{ user.investido }}" data-prefix="R$ ">0</div>
-    </div>
-    <div class="stat-card solar fade-up">
+      <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+    </button>
+    <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.cashback_orquideas)">
       <div class="stat-icon">🌸</div>
       <div class="stat-label">Cashback Orquídeas (R$)</div>
       <div class="stat-value count-up" data-target="{{ user.cashback_orquideas }}" data-prefix="R$ ">0</div>
-    </div>
+      <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+    </button>
     {% if residencia %}
-    <div class="stat-card green fade-up">
+    <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.economia_mensal_rs)">
       <div class="stat-icon">🏠</div>
       <div class="stat-label">Economia Mensal (R$)</div>
       <div class="stat-value count-up" data-target="{{ residencia.economia_mensal_rs }}" data-prefix="R$ ">0</div>
-    </div>
+      <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+    </button>
     {% endif %}
   </div>
 
@@ -52,7 +58,7 @@
     <h3>🏠 Status da Minha Residência</h3>
     <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1rem;">{{ residencia.endereco }}</p>
     <div class="status-row">
-      <span style="color:var(--text-secondary);">Em dia com o Banco Solar</span>
+      <span style="color:var(--text-secondary);">Em dia com o Banco Jardim Botânico</span>
       <span class="badge {{ 'badge-success' if residencia.em_dia_banco == 'sim' else 'badge-danger' }}">
         {{ '✅ Sim' if residencia.em_dia_banco == 'sim' else '❌ Não' }}
       </span>
@@ -122,11 +128,47 @@
     });
   }
 
-  Chart.defaults.color = '#94a3b8';
-  Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+  Chart.defaults.color = '#475569';
+  Chart.defaults.borderColor = 'rgba(15,23,42,0.08)';
   Chart.defaults.font.family = "'Inter', sans-serif";
 
   const historico = {{ historico | tojson }};
+
+  // ─── Dados para o modal de cada indicador ───
+  const statInfo = {
+    economia_kw: {
+      title: 'Minha Economia (kW)', icon: '⚡', color: '#d97706',
+      desc: 'Quantidade de energia (kW) que você deixou de consumir da concessionária ao longo da sua participação no banco solar, graças aos créditos recebidos.',
+      history: { labels: historico.meses, values: historico.economia }
+    },
+    creditos: {
+      title: 'Créditos Restantes', icon: '💳', color: '#059669',
+      desc: 'Créditos de energia que ainda estão disponíveis na sua conta para abater em contas futuras de luz.',
+      history: { labels: historico.meses, values: historico.creditos }
+    },
+    kw_recebidos: {
+      title: 'kW Recebidos', icon: '🔋', color: '#2563eb',
+      desc: 'Total de energia (kW) que você já recebeu das usinas solares parceiras desde que entrou no banco solar.',
+      history: { labels: historico.meses, values: historico.kw_recebidos }
+    },
+    investido: {
+      title: 'Total Investido (R$)', icon: '💰', color: '#7c3aed',
+      desc: 'Valor total, em reais, que você investiu para participar do banco solar e ter direito aos créditos de energia.',
+      total: {{ user.investido }}
+    },
+    cashback_orquideas: {
+      title: 'Cashback Orquídeas (R$)', icon: '🌸', color: '#d97706',
+      desc: 'Valor devolvido a você pelo programa de cashback "Orquídeas", um benefício extra por manter sua participação em dia.',
+      total: {{ user.cashback_orquideas }}
+    },
+    {% if residencia %}
+    economia_mensal_rs: {
+      title: 'Economia Mensal (R$)', icon: '🏠', color: '#059669',
+      desc: 'Estimativa de quanto sua residência economiza por mês em reais, comparando a tarifa da concessionária com a tarifa solar do banco.',
+      total: {{ residencia.economia_mensal_rs }}
+    }
+    {% endif %}
+  };
 
   // Economia line chart
   new Chart(document.getElementById('chartEconomia'), {
@@ -145,7 +187,7 @@
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -164,7 +206,7 @@
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -185,7 +227,7 @@
     options: {
       responsive: true,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 

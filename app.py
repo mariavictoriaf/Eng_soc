@@ -1,5 +1,5 @@
 """
-Banco Solar - Sistema de Gestão de Bancos Solares
+Banco Jardim Botânico - Sistema de Gestão de Bancos Solares
 Aplicação Flask com painel público, painel de cliente e painel administrativo.
 """
 

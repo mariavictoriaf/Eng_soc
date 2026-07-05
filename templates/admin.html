@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Banco Solar — Administração{% endblock %}
+{% block title %}Banco Jardim Botânico — Administração{% endblock %}
 
 {% block content %}
 <div class="container dashboard">
@@ -24,7 +24,7 @@
 
     <div class="stats-grid">
       {% for u in usinas %}
-      <div class="stat-card {{ 'green' if u.status == 'ativa' else 'solar' }} fade-up">
+      <button type="button" class="stat-card {{ 'green' if u.status == 'ativa' else 'solar' }} fade-up" onclick="openUsinaModal('{{ u.nome }}')">
         <div class="stat-icon">{{ '🟢' if u.status == 'ativa' else '🟡' }}</div>
         <div class="stat-label">{{ u.nome }}</div>
         <div class="stat-value" style="font-size:1.3rem;">{{ '{:,.0f}'.format(u.geracao_mensal_kwh) }} kWh</div>
@@ -43,7 +43,8 @@
             <span class="badge {{ 'badge-success' if u.status == 'ativa' else 'badge-warning' }}">{{ u.status }}</span>
           </p>
         </div>
-      </div>
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
       {% endfor %}
     </div>
 
@@ -74,36 +75,42 @@
     <h2 class="section-title"><span class="icon icon-blue">📊</span> Dados Unificados</h2>
 
     <div class="stats-grid">
-      <div class="stat-card solar fade-up">
+      <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.total_capacidade)">
         <div class="stat-icon">⚡</div>
         <div class="stat-label">Capacidade Total (kW)</div>
         <div class="stat-value count-up" data-target="{{ dados_unificados.total_capacidade }}">0</div>
-      </div>
-      <div class="stat-card green fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.total_geracao_mensal)">
         <div class="stat-icon">🏭</div>
         <div class="stat-label">Geração Mensal (kWh)</div>
         <div class="stat-value count-up" data-target="{{ dados_unificados.total_geracao_mensal }}">0</div>
-      </div>
-      <div class="stat-card blue fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card blue fade-up" onclick="openStatModal(statInfo.total_co2)">
         <div class="stat-icon">🌿</div>
         <div class="stat-label">CO₂ Evitado Total (kg)</div>
         <div class="stat-value count-up" data-target="{{ dados_unificados.total_co2 }}">0</div>
-      </div>
-      <div class="stat-card purple fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card purple fade-up" onclick="openStatModal(statInfo.media_eficiencia)">
         <div class="stat-icon">📊</div>
         <div class="stat-label">Eficiência Média</div>
         <div class="stat-value">{{ dados_unificados.media_eficiencia }}%</div>
-      </div>
-      <div class="stat-card green fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.num_usinas_ativas)">
         <div class="stat-icon">🟢</div>
         <div class="stat-label">Usinas Ativas</div>
         <div class="stat-value">{{ dados_unificados.num_usinas_ativas }}</div>
-      </div>
-      <div class="stat-card solar fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.num_usinas_manutencao)">
         <div class="stat-icon">🔧</div>
         <div class="stat-label">Em Manutenção</div>
         <div class="stat-value">{{ dados_unificados.num_usinas_manutencao }}</div>
-      </div>
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
     </div>
 
     <div class="charts-grid">
@@ -131,26 +138,30 @@
     <h2 class="section-title"><span class="icon icon-green">💰</span> Economia vs Concessionária</h2>
 
     <div class="stats-grid">
-      <div class="stat-card solar fade-up">
+      <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.tarifa_concessionaria)">
         <div class="stat-icon">🏷️</div>
         <div class="stat-label">Tarifa Concessionária (R$/kWh)</div>
         <div class="stat-value">R$ {{ economia_concessionaria.tarifa_concessionaria }}</div>
-      </div>
-      <div class="stat-card green fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.tarifa_solar)">
         <div class="stat-icon">☀️</div>
         <div class="stat-label">Tarifa Solar (R$/kWh)</div>
         <div class="stat-value">R$ {{ economia_concessionaria.tarifa_solar }}</div>
-      </div>
-      <div class="stat-card blue fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card blue fade-up" onclick="openStatModal(statInfo.economia_percentual)">
         <div class="stat-icon">📉</div>
         <div class="stat-label">Economia Percentual</div>
         <div class="stat-value">{{ economia_concessionaria.economia_percentual }}%</div>
-      </div>
-      <div class="stat-card purple fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card purple fade-up" onclick="openStatModal(statInfo.economia_mensal_rs)">
         <div class="stat-icon">💰</div>
         <div class="stat-label">Economia Mensal (R$)</div>
         <div class="stat-value count-up" data-target="{{ economia_concessionaria.economia_mensal_rs }}" data-prefix="R$ ">0</div>
-      </div>
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
     </div>
 
     <div class="charts-grid">
@@ -171,26 +182,30 @@
 
     <!-- Status resumo -->
     <div class="stats-grid">
-      <div class="stat-card green fade-up">
+      <button type="button" class="stat-card green fade-up" onclick="openStatModal(statInfo.total_residencias)">
         <div class="stat-icon">🏠</div>
         <div class="stat-label">Total de Residências</div>
         <div class="stat-value">{{ stats_residencias.total }}</div>
-      </div>
-      <div class="stat-card solar fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card solar fade-up" onclick="openStatModal(statInfo.em_dia_banco)">
         <div class="stat-icon">🏦</div>
         <div class="stat-label">Em dia com Banco</div>
         <div class="stat-value">{{ stats_residencias.em_dia_banco }} <span style="font-size:0.8rem;color:var(--text-muted)">({{ stats_residencias.em_dia_banco_pct }}%)</span></div>
-      </div>
-      <div class="stat-card blue fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card blue fade-up" onclick="openStatModal(statInfo.em_dia_concessionaria)">
         <div class="stat-icon">🔌</div>
         <div class="stat-label">Em dia Concessionária</div>
         <div class="stat-value">{{ stats_residencias.em_dia_concessionaria }} <span style="font-size:0.8rem;color:var(--text-muted)">({{ stats_residencias.em_dia_concessionaria_pct }}%)</span></div>
-      </div>
-      <div class="stat-card purple fade-up">
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
+      <button type="button" class="stat-card purple fade-up" onclick="openStatModal(statInfo.cashback_em_dia)">
         <div class="stat-icon">🌸</div>
         <div class="stat-label">Cashback em dia</div>
         <div class="stat-value">{{ stats_residencias.cashback_em_dia }} <span style="font-size:0.8rem;color:var(--text-muted)">({{ stats_residencias.cashback_em_dia_pct }}%)</span></div>
-      </div>
+        <div class="stat-hint">🔍 Ver histórico e detalhes</div>
+      </button>
     </div>
 
     <!-- Filtro -->
@@ -293,13 +308,100 @@
     });
   }
 
-  Chart.defaults.color = '#94a3b8';
-  Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+  Chart.defaults.color = '#475569';
+  Chart.defaults.borderColor = 'rgba(15,23,42,0.08)';
   Chart.defaults.font.family = "'Inter', sans-serif";
 
   const geracaoMes = {{ geracao_por_mes | tojson }};
   const geracaoInd = {{ geracao_individual | tojson }};
   const residencias = {{ residencias | tojson }};
+
+  // ─── Modal de uma usina específica (usa o histórico real dela) ───
+  function openUsinaModal(nome) {
+    const data = geracaoInd[nome];
+    openStatModal({
+      title: nome, icon: '🏭', color: '#059669',
+      desc: 'Geração de energia (kWh) da usina "' + nome + '" ao longo dos últimos meses, medida diretamente pelos equipamentos instalados na unidade.',
+      history: { labels: data.meses, values: data.geracao }
+    });
+  }
+
+  // ─── Dados para o modal de cada indicador administrativo ───
+  const statInfo = {
+    total_capacidade: {
+      title: 'Capacidade Total (kW)', icon: '⚡', color: '#d97706',
+      desc: 'Soma da capacidade instalada (em kW) de todas as usinas solares parceiras do banco, ativas ou em manutenção.',
+      total: {{ dados_unificados.total_capacidade }}
+    },
+    total_geracao_mensal: {
+      title: 'Geração Mensal (kWh)', icon: '🏭', color: '#059669',
+      desc: 'Energia total gerada por todas as usinas no último mês registrado, medida em quilowatt-hora (kWh).',
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(d => d.geracao_kwh) }
+    },
+    total_co2: {
+      title: 'CO₂ Evitado Total (kg)', icon: '🌿', color: '#2563eb',
+      desc: 'Estimativa acumulada de CO₂ que deixou de ser emitido na atmosfera graças à geração solar do banco.',
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(d => d.co2_evitado_kg) }
+    },
+    media_eficiencia: {
+      title: 'Eficiência Média', icon: '📊', color: '#7c3aed',
+      desc: 'Média percentual de eficiência de conversão de energia solar em eletricidade entre todas as usinas parceiras.',
+      total: {{ dados_unificados.media_eficiencia }}
+    },
+    num_usinas_ativas: {
+      title: 'Usinas Ativas', icon: '🟢', color: '#059669',
+      desc: 'Número de usinas solares parceiras que estão atualmente em operação normal, gerando energia para o banco.',
+      total: {{ dados_unificados.num_usinas_ativas }}
+    },
+    num_usinas_manutencao: {
+      title: 'Em Manutenção', icon: '🔧', color: '#d97706',
+      desc: 'Número de usinas parceiras que estão temporariamente fora de operação para manutenção preventiva ou corretiva.',
+      total: {{ dados_unificados.num_usinas_manutencao }}
+    },
+    tarifa_concessionaria: {
+      title: 'Tarifa Concessionária (R$/kWh)', icon: '🏷️', color: '#dc2626',
+      desc: 'Valor médio cobrado pela concessionária de energia elétrica tradicional por kWh, usado como referência de comparação.',
+      total: {{ economia_concessionaria.tarifa_concessionaria * 100 }}
+    },
+    tarifa_solar: {
+      title: 'Tarifa Solar (R$/kWh)', icon: '☀️', color: '#059669',
+      desc: 'Valor cobrado pela energia solar fornecida através do banco, mais barata que a tarifa da concessionária tradicional.',
+      total: {{ economia_concessionaria.tarifa_solar * 100 }}
+    },
+    economia_percentual: {
+      title: 'Economia Percentual', icon: '📉', color: '#2563eb',
+      desc: 'Percentual de economia obtido ao usar a tarifa solar do banco em vez da tarifa da concessionária tradicional.',
+      total: {{ economia_concessionaria.economia_percentual }}
+    },
+    economia_mensal_rs: {
+      title: 'Economia Mensal (R$)', icon: '💰', color: '#7c3aed',
+      desc: 'Valor total, em reais, economizado no último mês por todos os beneficiários, comparando a tarifa solar com a da concessionária.',
+      history: {
+        labels: geracaoMes.map(d => d.mes),
+        values: geracaoMes.map(d => Math.round(d.geracao_kwh * ({{ economia_concessionaria.tarifa_concessionaria }} - {{ economia_concessionaria.tarifa_solar }}) * 100) / 100)
+      }
+    },
+    total_residencias: {
+      title: 'Total de Residências', icon: '🏠', color: '#059669',
+      desc: 'Número total de residências beneficiárias cadastradas no banco solar, recebendo créditos de energia.',
+      total: {{ stats_residencias.total }}
+    },
+    em_dia_banco: {
+      title: 'Em dia com Banco', icon: '🏦', color: '#d97706',
+      desc: 'Número de residências com os pagamentos referentes à participação no banco solar em dia (' + {{ stats_residencias.em_dia_banco_pct }} + '% do total).',
+      total: {{ stats_residencias.em_dia_banco }}
+    },
+    em_dia_concessionaria: {
+      title: 'Em dia Concessionária', icon: '🔌', color: '#2563eb',
+      desc: 'Número de residências com a conta de luz da concessionária tradicional em dia (' + {{ stats_residencias.em_dia_concessionaria_pct }} + '% do total).',
+      total: {{ stats_residencias.em_dia_concessionaria }}
+    },
+    cashback_em_dia: {
+      title: 'Cashback em dia', icon: '🌸', color: '#7c3aed',
+      desc: 'Número de residências com o programa de cashback "Orquídeas" em dia (' + {{ stats_residencias.cashback_em_dia_pct }} + '% do total).',
+      total: {{ stats_residencias.cashback_em_dia }}
+    }
+  };
 
   // ═══ USINAS TAB CHARTS ═══
   let chartUsinaInd = null;
@@ -324,7 +426,7 @@
         }]
       },
       options: { responsive: true, plugins: { legend: { display: false } },
-        scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+        scales: { y: { grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
       }
     });
 
@@ -340,7 +442,7 @@
         }]
       },
       options: { responsive: true, plugins: { legend: { display: false } },
-        scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+        scales: { y: { grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
       }
     });
   }
@@ -358,7 +460,7 @@
       }]
     },
     options: { responsive: true, plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -373,7 +475,7 @@
       }]
     },
     options: { responsive: true, plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -388,7 +490,7 @@
       }]
     },
     options: { responsive: true, plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -408,7 +510,7 @@
     options: {
       indexAxis: 'y', responsive: true,
       plugins: { legend: { display: false } },
-      scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' } }, y: { grid: { display: false } } }
+      scales: { x: { grid: { color: 'rgba(15,23,42,0.06)' } }, y: { grid: { display: false } } }
     }
   });
 
@@ -419,7 +521,7 @@
   new Chart(document.getElementById('chartTarifas'), {
     type: 'bar',
     data: {
-      labels: ['Concessionária', 'Banco Solar'],
+      labels: ['Concessionária', 'Banco Jardim Botânico'],
       datasets: [{
         data: [tarConc, tarSolar],
         backgroundColor: ['rgba(239,68,68,0.6)', 'rgba(16,185,129,0.6)'],
@@ -428,7 +530,7 @@
     },
     options: {
       responsive: true, plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { beginAtZero: true, grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -449,7 +551,7 @@
       }]
     },
     options: { responsive: true, plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
@@ -489,7 +591,7 @@
       }]
     },
     options: { responsive: true, plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } }, x: { grid: { display: false } } }
+      scales: { y: { grid: { color: 'rgba(15,23,42,0.06)' } }, x: { grid: { display: false } } }
     }
   });
 
