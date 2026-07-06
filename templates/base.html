@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Banco Jardim Botânico - Transparência e gestão de energia solar comunitária">
-  <title>{% block title %}Banco Jardim Botânico{% endblock %}</title>
+  <meta name="description" content="Banco Comunitário Jardim Botânico - Transparência e gestão de energia solar comunitária">
+  <title>{% block title %}Banco Comunitário Jardim Botânico{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
 </head>
 <body>
@@ -14,8 +16,9 @@
 
   <nav class="navbar">
     <a href="{{ url_for('index') }}" class="navbar-brand">
-      <div class="sun-icon">☀️</div>
-      Banco Jardim Botânico
+      <img class="brand-logo" src="{{ url_for('static', filename='img/logo_jb.png') }}" alt="">
+
+      Banco Comunitário Jardim Botânico
     </a>
     <div class="navbar-actions">
       {% if session.get('user_id') %}
@@ -27,7 +30,7 @@
         {% endif %}
         <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">Sair</a>
       {% else %}
-        <a href="{{ url_for('login') }}" class="btn btn-primary">🔑 Entrar</a>
+        <a href="{{ url_for('login') }}" class="btn btn-primary">Entrar</a>
       {% endif %}
     </div>
   </nav>
@@ -35,7 +38,7 @@
   {% block content %}{% endblock %}
 
   <footer class="footer">
-    <p>© 2026 Banco Jardim Botânico — Energia limpa, economia real. 🌱</p>
+    <p>© 2026 Banco Comunitário Jardim Botânico — Energia limpa, economia real. 🌱</p>
   </footer>
 
   <!-- ═══ STAT MODAL (compartilhado por todas as páginas) ═══ -->
@@ -99,7 +102,7 @@
         : distributeHistory(info.total || 0, info.title || 'stat', labels);
 
       chartWrap.style.display = 'block';
-      const color = info.color || '#d97706';
+      const color = info.color || '#15803d';
       statModalChart = new Chart(document.getElementById('statModalChart'), {
         type: info.chartType || 'line',
         data: {

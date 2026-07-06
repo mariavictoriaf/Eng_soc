@@ -1,6 +1,6 @@
 id,nome,localizacao,capacidade_kw,geracao_mensal_kwh,status,data_instalacao,co2_evitado_kg,eficiencia_percent
-1,Usina Solar Alpha,Ribeirão Preto - SP,500,68500,ativa,2023-06-15,34250,92.5
-2,Usina Solar Beta,Campinas - SP,350,45200,ativa,2023-09-01,22600,89.3
-3,Usina Solar Gamma,São Carlos - SP,420,56800,ativa,2024-01-10,28400,91.1
-4,Usina Solar Delta,Araraquara - SP,280,35600,manutencao,2024-03-20,17800,87.6
-5,Usina Solar Epsilon,Bauru - SP,600,82000,ativa,2023-04-05,41000,94.2
+1,Usina Solar Alpha,Mangabeira - PB,500,68500,ativa,2023-06-15,34250,92.5
+2,Usina Solar Beta,Bancários - PB,350,45200,manutencao,2023-09-01,22600,89.3
+3,Usina Solar Gamma,Bessa - PB,420,56800,ativa,2024-01-10,28400,91.1
+4,Usina Solar Delta,Cabedelo - PB,280,35600,manutencao,2024-03-20,17800,87.6
+

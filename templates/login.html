@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Banco Jardim Botânico — Entrar{% endblock %}
+{% block title %}Banco Comunitário Jardim Botânico — Entrar{% endblock %}
 
 {% block content %}
 <div class="login-page">
   <div class="login-card">
-    <div style="text-align:center;margin-bottom:1rem;">
-      <div style="width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#f97316);display:inline-flex;align-items:center;justify-content:center;font-size:1.8rem;box-shadow:0 0 30px rgba(245,158,11,0.3);">☀️</div>
-    </div>
     <h2>Bem-vindo de volta</h2>
-    <p class="subtitle">Acesse seu painel do Banco Jardim Botânico</p>
+    <p class="subtitle">Acesse seu painel do Banco Comunitário Jardim Botânico</p>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -27,7 +24,7 @@
         <label for="senha">Senha</label>
         <input type="password" id="senha" name="senha" placeholder="••••••••" required>
       </div>
-      <button type="submit" class="btn btn-primary login-btn">Entrar →</button>
+      <button type="submit" class="btn btn-primary login-btn">Entrar</button>
     </form>
 
     <div class="login-footer">
