@@ -434,7 +434,7 @@
     },
     co2_evitado_total: {
       title: 'CO₂ Evitado (kg)', icon: '🌿', color: '#2563eb',
-      desc: 'Estimativa de emissões de CO₂ que deixaram de ser lançadas na atmosfera graças à energia solar gerada, em comparação com fontes convencionais.',
+      desc: 'Estimativa de emissões de CO₂ que deixaram de ser lançadas na atmosfera graças à energia solar gerada, em comparação com fontes convencionais. Cálculo baseado no fator de 0,5 kg CO₂/kWh, referência do Fator Médio de Emissão do Sistema Interligado Nacional (SIN), publicado pelo MCTI.',
       history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(d => d.co2_evitado_kg) }
     }
   };

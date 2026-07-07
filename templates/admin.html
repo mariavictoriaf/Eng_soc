@@ -425,7 +425,7 @@
     },
     total_co2: {
       title: 'CO₂ Evitado Total (kg)', icon: '🌿', color: '#2563eb',
-      desc: 'Estimativa acumulada de CO₂ que deixou de ser emitido na atmosfera graças à geração solar do banco.',
+      desc: 'Estimativa acumulada de CO₂ que deixou de ser emitido na atmosfera graças à geração solar do banco. Cálculo baseado no fator de 0,5 kg CO₂/kWh, referência do Fator Médio de Emissão do Sistema Interligado Nacional (SIN), publicado pelo MCTI.',
       history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(d => d.co2_evitado_kg) }
     },
     media_eficiencia: {
