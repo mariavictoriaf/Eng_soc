@@ -21,10 +21,7 @@ TARIFA_SOLAR_CLIENTE = 0.30  # R$/kWh cobrado pelo banco na fatura do cliente
 
 # Coordenadas aproximadas dos bairros/cidades da região de João Pessoa (PB) onde as usinas parceiras estão instaladas
 COORDENADAS_CIDADES = {
-    'Mangabeira - PB': (-7.1667, -34.8500),
-    'Bancários - PB': (-7.1400, -34.8350),
-    'Bessa - PB': (-7.0850, -34.8300),
-    'Cabedelo - PB': (-6.9800, -34.8300),
+    'R. Arquivista Jonathas Carécas, 74 - Castelo Branco, João Pessoa - PB, 58057-034': (-7.1342, -34.8550),
 }
 
 

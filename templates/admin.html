@@ -431,32 +431,38 @@
     media_eficiencia: {
       title: 'Eficiência Média', icon: '📊', color: '#7c3aed',
       desc: 'Média percentual de eficiência de conversão de energia solar em eletricidade entre todas as usinas parceiras.',
-      total: {{ dados_unificados.media_eficiencia }}
+      total: {{ dados_unificados.media_eficiencia }},
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(() => {{ dados_unificados.media_eficiencia }}) }
     },
     num_usinas_ativas: {
       title: 'Usinas Ativas', icon: '🟢', color: '#059669',
       desc: 'Número de usinas solares parceiras que estão atualmente em operação normal, gerando energia para o banco.',
-      total: {{ dados_unificados.num_usinas_ativas }}
+      total: {{ dados_unificados.num_usinas_ativas }},
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(() => {{ dados_unificados.num_usinas_ativas }}) }
     },
     num_usinas_manutencao: {
       title: 'Em Manutenção', icon: '🔧', color: '#15803d',
       desc: 'Número de usinas parceiras que estão temporariamente fora de operação para manutenção preventiva ou corretiva.',
-      total: {{ dados_unificados.num_usinas_manutencao }}
+      total: {{ dados_unificados.num_usinas_manutencao }},
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(() => {{ dados_unificados.num_usinas_manutencao }}) }
     },
     tarifa_concessionaria: {
       title: 'Tarifa Concessionária (R$/kWh)', icon: '🏷️', color: '#dc2626',
       desc: 'Valor médio cobrado pela concessionária de energia elétrica tradicional por kWh, usado como referência de comparação.',
-      total: {{ economia_concessionaria.tarifa_concessionaria * 100 }}
+      total: {{ economia_concessionaria.tarifa_concessionaria * 100 }},
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(() => {{ economia_concessionaria.tarifa_concessionaria * 100 }}) }
     },
     tarifa_solar: {
       title: 'Tarifa Solar (R$/kWh)', icon: '☀️', color: '#059669',
       desc: 'Valor cobrado pela energia solar fornecida através do banco, mais barata que a tarifa da concessionária tradicional.',
-      total: {{ economia_concessionaria.tarifa_solar * 100 }}
+      total: {{ economia_concessionaria.tarifa_solar * 100 }},
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(() => {{ economia_concessionaria.tarifa_solar * 100 }}) }
     },
     economia_percentual: {
       title: 'Economia Percentual', icon: '📉', color: '#2563eb',
       desc: 'Percentual de economia obtido ao usar a tarifa solar do banco em vez da tarifa da concessionária tradicional.',
-      total: {{ economia_concessionaria.economia_percentual }}
+      total: {{ economia_concessionaria.economia_percentual }},
+      history: { labels: geracaoMes.map(d => d.mes), values: geracaoMes.map(() => {{ economia_concessionaria.economia_percentual }}) }
     },
     economia_mensal_rs: {
       title: 'Economia Mensal (R$)', icon: '💰', color: '#7c3aed',

@@ -1,6 +1,2 @@
 id,nome,localizacao,capacidade_kw,geracao_mensal_kwh,status,data_instalacao,co2_evitado_kg,eficiencia_percent
-1,Usina Solar Alpha,Mangabeira - PB,500,68500,ativa,2023-06-15,34250,92.5
-2,Usina Solar Beta,Bancários - PB,350,45200,manutencao,2023-09-01,22600,89.3
-3,Usina Solar Gamma,Bessa - PB,420,56800,ativa,2024-01-10,28400,91.1
-4,Usina Solar Delta,Cabedelo - PB,280,35600,manutencao,2024-03-20,17800,87.6
-
+1,Usina 1,"R. Arquivista Jonathas Carécas, 74 - Castelo Branco, João Pessoa - PB, 58057-034",500,68500,ativa,2023-06-15,34250,92.5

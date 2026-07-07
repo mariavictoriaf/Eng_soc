@@ -535,7 +535,7 @@
       bounds.push([u.lat, u.lng]);
     });
 
-    mapa.fitBounds(bounds, { padding: [30, 30] });
+    mapa.setView([usinasComCoordenadas[0].lat, usinasComCoordenadas[0].lng], 12);
   } else if (mapaEl) {
     mapaEl.innerHTML = '<p style="padding:1rem;color:var(--text-muted);font-size:0.85rem;">Localização das usinas indisponível no momento.</p>';
   }
